@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanctuary - C-PTSD Grounding & Self-Care</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sanctuary: {
+                            bg: '#F7F5F0',
+                            card: '#FFFFFF',
+                            sage: '#3A5A40',
+                            sageLight: '#E8EFE9',
+                            sageDark: '#2C4430',
+                            terracotta: '#D4A373',
+                            terracottaLight: '#F9F1E8',
+                            slate: '#4A5568',
+                            muted: '#8C98A4',
+                            border: '#E2E8F0'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Georgia', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+        
+        body {
+            background-color: #F7F5F0;
+            color: #2D3748;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Smooth Breathing Circle Animation */
+        @keyframes expandContract {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.6); }   /* Inhale */
+            50% { transform: scale(1.6); }   /* Hold */
+            75% { transform: scale(1); }     /* Exhale */
+        }
+
+        .breathing-circle {
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .breathing-active {
+            animation: expandContract 16s infinite ease-in-out;
+        }
+
+        /* Custom subtle scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F7F5F0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E0;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between relative pb-24 md:pb-8">
+
+    <!-- Top Navigation Header -->
+    <header class="w-full max-w-4xl mx-auto px-4 py-6 flex items-center justify-between border-b border-gray-200/60">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-sanctuary-sage text-white flex items-center justify-center shadow-sm">
+                <i data-lucide="leaf" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-semibold text-sanctuary-sageDark tracking-tight">Sanctuary</h1>
+                <p class="text-xs text-sanctuary-muted">A gentle space for grounding & discovery</p>
+            </div>
+        </div>
+        <button onclick="openSOSModal()" class="flex items-center gap-2 bg-sanctuary-terracotta text-white px-4 py-2.5 rounded-full text-sm font-medium hover:bg-opacity-90 transition shadow-sm active:scale-95">
+            <i data-lucide="shield-alert" class="w-4 h-4"></i>
+            <span>Ground Me (SOS)</span>
+        </button>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="w-full max-w-4xl mx-auto px-4 py-6 flex-1">
+
+        <!-- TAB 1: DAILY ANCHOR / HOME -->
+        <section id="tab-home" class="tab-content space-y-6">
+            <!-- Gentle Welcome Card -->
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100/80 relative overflow-hidden">
+                <div class="max-w-xl">
+                    <span class="inline-block px-3 py-1 bg-sanctuary-sageLight text-sanctuary-sage text-xs font-medium rounded-full mb-3">Daily Anchor</span>
+                    <h2 class="text-2xl font-serif font-normal text-gray-800 mb-2">Welcome back. How is your nervous system feeling right now?</h2>
+                    <p class="text-sm text-gray-600 leading-relaxed">There is no wrong answer and no rush. Take a slow breath and select the state that closest fits where you are today.</p>
+                </div>
+
+                <!-- Nervous System State Selector -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-6">
+                    <button onclick="selectState('hyper')" id="state-btn-hyper" class="state-btn text-left p-4 rounded-2xl border-2 border-gray-100 hover:border-sanctuary-terracotta/40 bg-gray-50/50 transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md">Hyperarousal</span>
+                            <i data-lucide="zap" class="w-4 h-4 text-amber-600"></i>
+                        </div>
+                        <p class="text-sm font-medium text-gray-800">Anxious / Overwhelmed</p>
+                        <p class="text-xs text-gray-500 mt-1">Racing thoughts, hyper-vigilance, tightness.</p>
+                    </button>
+
+                    <button onclick="selectState('window')" id="state-btn-window" class="state-btn text-left p-4 rounded-2xl border-2 border-gray-100 hover:border-sanctuary-sage/40 bg-gray-50/50 transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">Window of Tolerance</span>
+                            <i data-lucide="sun" class="w-4 h-4 text-emerald-600"></i>
+                        </div>
+                        <p class="text-sm font-medium text-gray-800">Present / Grounded</p>
+                        <p class="text-xs text-gray-500 mt-1">Able to reflect, calm, connected to self.</p>
+                    </button>
+
+                    <button onclick="selectState('hypo')" id="state-btn-hypo" class="state-btn text-left p-4 rounded-2xl border-2 border-gray-100 hover:border-blue-300 bg-gray-50/50 transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md">Hypoarousal</span>
+                            <i data-lucide="cloud-rain" class="w-4 h-4 text-indigo-600"></i>
+                        </div>
+                        <p class="text-sm font-medium text-gray-800">Numb / Frozen</p>
+                        <p class="text-xs text-gray-500 mt-1">Exhausted, disconnected, fog, heavy.</p>
+                    </button>
+                </div>
+
+                <!-- Dynamic Gentle Recommendation Banner -->
+                <div id="gentle-action-card" class="mt-6 p-4 rounded-2xl bg-sanctuary-terracottaLight border border-sanctuary-terracotta/20 flex items-start gap-3">
+                    <div class="p-2 bg-white rounded-xl text-sanctuary-terracotta shadow-xs mt-0.5">
+                        <i data-lucide="sparkles" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-semibold uppercase tracking-wider text-sanctuary-terracotta">Suggested Gentle Action</h4>
+                        <p id="gentle-action-text" class="text-sm text-gray-700 mt-0.5">Select a nervous system state above to receive a gentle recommendation.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Micro-Checkin Sliders & Daily Reflection -->
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100/80">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <i data-lucide="sliders" class="w-5 h-5 text-sanctuary-sage"></i>
+                    <span>Energy & Capacity Check-In</span>
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-gray-600 font-medium">Physical Energy</span>
+                            <span id="val-physical" class="text-sanctuary-sage font-semibold">5/10</span>
+                        </div>
+                        <input type="range" min="1" max="10" value="5" id="slider-physical" oninput="updateSliderVal('physical')" class="w-full accent-sanctuary-sage cursor-pointer">
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-gray-600 font-medium">Emotional Capacity</span>
+                            <span id="val-emotional" class="text-sanctuary-sage font-semibold">5/10</span>
+                        </div>
+                        <input type="range" min="1" max="10" value="5" id="slider-emotional" oninput="updateSliderVal('emotional')" class="w-full accent-sanctuary-sage cursor-pointer">
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-gray-600 font-medium">Social Battery</span>
+                            <span id="val-social" class="text-sanctuary-sage font-semibold">5/10</span>
+                        </div>
+                        <input type="range" min="1" max="10" value="5" id="slider-social" oninput="updateSliderVal('social')" class="w-full accent-sanctuary-sage cursor-pointer">
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <label class="block text-sm font-medium text-gray-700">One small kindness I can give myself today:</label>
+                    <input type="text" id="daily-kindness-input" placeholder="e.g., Unclenching my jaw, warm cup of tea, saying no to an optional task..." class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-sanctuary-sage/40 text-sm bg-gray-50/50">
+                    <button onclick="saveDailyKindness()" class="px-5 py-2.5 bg-sanctuary-sage text-white text-sm font-medium rounded-xl hover:bg-sanctuary-sageDark transition flex items-center gap-2">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                        <span>Save Today's Anchor</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: TRIGGER UNPACKER & PARTS WORK -->
+        <section id="tab-triggers" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100/80">
+                <div class="mb-6">
+                    <span class="inline-block px-3 py-1 bg-sanctuary-terracottaLight text-sanctuary-terracotta text-xs font-medium rounded-full mb-2">Compassionate Inquiry</span>
+                    <h2 class="text-2xl font-serif text-gray-800">Trigger Unpacker & Parts Dialogue</h2>
+                    <p class="text-sm text-gray-600 mt-1">A safe space to understand survival responses without shame or self-judgment.</p>
+                </div>
+
+                <!-- Step-by-Step Form -->
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Step 1: What happened? (The Event or Trigger)</label>
+                        <p class="text-xs text-gray-500 mb-2">Focus on neutral facts (e.g., "Someone didn't reply to my message for 4 hours").</p>
+                        <textarea id="trigger-event" rows="2" class="w-full p-3 rounded-xl border border-gray-200 text-sm focus:ring-2 focus:ring-sanctuary-terracotta/40 focus:outline-none bg-gray-50/50" placeholder="Write briefly about what occurred..."></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Step 2: Which survival response activated?</label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
+                            <label class="flex items-center gap-2 p-3 rounded-xl border border-gray-200 text-sm cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="response_type" value="Fight" class="accent-sanctuary-terracotta">
+                                <div>
+                                    <span class="font-medium text-gray-800">Fight</span>
+                                    <p class="text-[10px] text-gray-500">Anger, defensiveness</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-2 p-3 rounded-xl border border-gray-200 text-sm cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="response_type" value="Flight" class="accent-sanctuary-terracotta">
+                                <div>
+                                    <span class="font-medium text-gray-800">Flight</span>
+                                    <p class="text-[10px] text-gray-500">Panic, urge to escape</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-2 p-3 rounded-xl border border-gray-200 text-sm cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="response_type" value="Freeze" class="accent-sanctuary-terracotta">
+                                <div>
+                                    <span class="font-medium text-gray-800">Freeze</span>
+                                    <p class="text-[10px] text-gray-500">Numbness, shut down</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-2 p-3 rounded-xl border border-gray-200 text-sm cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="response_type" value="Fawn" class="accent-sanctuary-terracotta">
+                                <div>
+                                    <span class="font-medium text-gray-800">Fawn</span>
+                                    <p class="text-[10px] text-gray-500">People-pleasing</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Step 3: What is true in the PRESENT moment?</label>
+                        <p class="text-xs text-gray-500 mb-2">Differentiate between old trauma narratives and your current safe reality.</p>
+                        <input type="text" id="trigger-reality" class="w-full p-3 rounded-xl border border-gray-200 text-sm focus:ring-2 focus:ring-sanctuary-terracotta/40 focus:outline-none bg-gray-50/50" placeholder="e.g., 'I am an adult now. I have choices and I am safe in my own room.'">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Step 4: A compassionate word to your protective part</label>
+                        <p class="text-xs text-gray-500 mb-2">Acknowledge that this part was only trying to protect you from past pain.</p>
+                        <input type="text" id="trigger-part-message" class="w-full p-3 rounded-xl border border-gray-200 text-sm focus:ring-2 focus:ring-sanctuary-terracotta/40 focus:outline-none bg-gray-50/50" placeholder="e.g., 'Thank you for trying to keep me safe. I can handle this now.'">
+                    </div>
+
+                    <button onclick="saveTriggerEntry()" class="w-full py-3 bg-sanctuary-terracotta text-white font-medium rounded-xl hover:bg-opacity-90 transition flex items-center justify-center gap-2 shadow-xs">
+                        <i data-lucide="bookmark" class="w-4 h-4"></i>
+                        <span>Save Private Reflection</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Saved Reflections Feed -->
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100/80">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                        <i data-lucide="history" class="w-5 h-5 text-sanctuary-terracotta"></i>
+                        <span>Past Unpacker Reflections</span>
+                    </h3>
+                    <span class="text-xs text-gray-400">Stored locally & privately</span>
+                </div>
+                <div id="trigger-list" class="space-y-3">
+                    <!-- Dynamic trigger entries load here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: SELF-DISCOVERY & GLIMMERS -->
+        <section id="tab-discovery" class="tab-content hidden space-y-6">
+            <!-- Glimmer Jar Section -->
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100/80">
+                <div class="flex items-start justify-between mb-4">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-amber-100 text-amber-800 text-xs font-medium rounded-full mb-2">Micro-Moments of Joy</span>
+                        <h2 class="text-2xl font-serif text-gray-800">My Glimmer Jar</h2>
+                        <p class="text-sm text-gray-600 mt-1">Glimmers are tiny signals to your nervous system that it is safe to feel peace or joy.</p>
+                    </div>
+                    <div class="p-3 bg-amber-50 text-amber-600 rounded-2xl">
+                        <i data-lucide="sparkle" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 mb-6">
+                    <input type="text" id="glimmer-input" placeholder="e.g., Warm sunlight through the window, soft blanket, cat purring..." class="flex-1 p-3 rounded-xl border border-gray-200 text-sm focus:ring-2 focus:ring-amber-400/40 focus:outline-none bg-gray-50/50">
+                    <button onclick="addGlimmer()" class="px-5 py-3 bg-amber-600 text-white font-medium text-sm rounded-xl hover:bg-amber-700 transition flex items-center gap-1.5 shrink-0">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Add Glimmer</span>
+                    </button>
+                </div>
+
+                <!-- Glimmer Tags Display -->
+                <div id="glimmer-container" class="flex flex-wrap gap-2 min-h-[60px] p-4 bg-amber-50/30 rounded-2xl border border-amber-100/60">
+                    <!-- Dynamic Glimmers -->
+                </div>
+            </div>
+
+            <!-- Boundaries & Values Builder -->
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100/80">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="shield" class="w-5 h-5 text-sanctuary-sage"></i>
+                    <span>Values & Healthy Boundaries Deck</span>
+                </h3>
+                <p class="text-sm text-gray-600 mb-6">Tap to highlight core values that support your healing journey today:</p>
+
+                <div id="values-grid" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <!-- Dynamic Value Cards populated via JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SOS / GROUNDING OVERLAY MODAL -->
+    <div id="sos-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl relative my-8 border border-gray-100 max-h-[90vh] overflow-y-auto">
+            <!-- Close Button -->
+            <button onclick="closeSOSModal()" class="absolute top-6 right-6 p-2 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="text-center mb-6">
+                <span class="inline-block p-3 bg-sanctuary-terracottaLight text-sanctuary-terracotta rounded-full mb-2">
+                    <i data-lucide="anchor" class="w-6 h-6"></i>
+                </span>
+                <h2 class="text-2xl font-serif text-gray-800">Grounding SOS Toolkit</h2>
+                <p class="text-sm text-gray-600">You are safe right now. Let's return to your body together step by step.</p>
+            </div>
+
+            <!-- SOS Navigation Pills -->
+            <div class="flex justify-center border-b border-gray-200 mb-6 gap-4 text-sm font-medium">
+                <button onclick="switchSOSTab('breathing')" id="sos-tab-breathing-btn" class="pb-3 border-b-2 border-sanctuary-sage text-sanctuary-sage">Box Breathing</button>
+                <button onclick="switchSOSTab('54321')" id="sos-tab-54321-btn" class="pb-3 border-b-2 border-transparent text-gray-400 hover:text-gray-600">5-4-3-2-1 Sensory</button>
+                <button onclick="switchSOSTab('anchors')" id="sos-tab-anchors-btn" class="pb-3 border-b-2 border-transparent text-gray-400 hover:text-gray-600">Reality Anchors</button>
+            </div>
+
+            <!-- SOS CONTENT 1: BOX BREATHING -->
+            <div id="sos-tab-breathing" class="sos-subtab text-center py-4">
+                <div class="relative w-48 h-48 mx-auto flex items-center justify-center my-6">
+                    <div id="breathing-ring" class="breathing-circle w-32 h-32 rounded-full bg-sanctuary-sageLight border-4 border-sanctuary-sage flex items-center justify-center shadow-inner">
+                        <span id="breathing-phase" class="text-sm font-semibold text-sanctuary-sageDark">Inhale</span>
+                    </div>
+                </div>
+
+                <p id="breathing-timer-text" class="text-xs text-gray-500 mb-4">4 seconds Inhale • 4s Hold • 4s Exhale • 4s Hold</p>
+
+                <button onclick="toggleBreathing()" id="breathing-toggle-btn" class="px-6 py-3 bg-sanctuary-sage text-white font-medium rounded-xl hover:bg-sanctuary-sageDark transition inline-flex items-center gap-2">
+                    <i data-lucide="play" class="w-4 h-4"></i>
+                    <span>Start Breathing Guide</span>
+                </button>
+            </div>
+
+            <!-- SOS CONTENT 2: 5-4-3-2-1 GROUNDING -->
+            <div id="sos-tab-54321" class="sos-subtab hidden space-y-4">
+                <div id="sensory-stepper-container">
+                    <!-- Dynamic stepper populated via JS -->
+                </div>
+            </div>
+
+            <!-- SOS CONTENT 3: REALITY ANCHORS CAROUSEL -->
+            <div id="sos-tab-anchors" class="sos-subtab hidden text-center py-6">
+                <div class="p-6 bg-sanctuary-bg rounded-2xl border border-gray-200/60 mb-6 min-h-[140px] flex items-center justify-center">
+                    <p id="affirmation-text" class="text-lg font-serif text-gray-800 leading-relaxed font-normal">"This is a memory or a nervous system reaction, not a current danger. I am in my body, and I am safe right now."</p>
+                </div>
+                <button onclick="nextAffirmation()" class="px-5 py-2.5 bg-sanctuary-terracotta text-white text-sm font-medium rounded-xl hover:bg-opacity-90 transition inline-flex items-center gap-2">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    <span>Next Reality Affirmation</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fixed Bottom Tab Bar (Mobile/Desktop friendly) -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 z-40 py-2">
+        <div class="max-w-md mx-auto flex justify-around items-center px-4">
+            <button onclick="switchTab('home')" id="nav-btn-home" class="nav-tab-btn flex flex-col items-center gap-1 text-sanctuary-sage font-medium text-xs py-1">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                <span>Anchor</span>
+            </button>
+            <button onclick="switchTab('triggers')" id="nav-btn-triggers" class="nav-tab-btn flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 text-xs py-1">
+                <i data-lucide="heart-handshake" class="w-5 h-5"></i>
+                <span>Unpacker</span>
+            </button>
+            <button onclick="switchTab('discovery')" id="nav-btn-discovery" class="nav-tab-btn flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 text-xs py-1">
+                <i data-lucide="sparkles" class="w-5 h-5"></i>
+                <span>Glimmers</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Application Logic -->
+    <script>
+        // --- DATA & STATE MANAGEMENT ---
+        const stateRecommendations = {
+            hyper: "Your system is in high alert. Try physical grounding: place both feet flat on the floor, wrap your arms around your shoulders in a soft self-hug, or press your hands gently against a wall.",
+            window: "You are in your window of tolerance! This is a wonderful moment for gentle reflection, adding a glimmer to your jar, or identifying a core personal value.",
+            hypo: "Your system is conserving energy in freeze mode. Try micro-movements: wiggle your toes, stretch your fingers, sip warm water, or gently look around the room to find 3 blue objects."
+        };
+
+        const affirmations = [
+            "This is an old memory or reaction, not a current danger. I am safe right now.",
+            "My body survived the past. I am in control of my choices today.",
+            "I do not have to fix everything right now. Slowing down is safe.",
+            "I am allowed to take up space and set boundaries without feeling guilt.",
+            "My nervous system is learning that safety is possible here and now."
+        ];
+
+        const valuesList = [
+            { name: 'Autonomy', desc: 'Owning my choices' },
+            { name: 'Quiet Peace', desc: 'Honoring silence' },
+            { name: 'Self-Compassion', desc: 'Softening self-criticism' },
+            { name: 'Safe Connection', desc: 'Trusting slowly' },
+            { name: 'Creativity', desc: 'Expressing without judgment' },
+            { name: 'Rest', desc: 'Resting without earning it' }
+        ];
+
+        let selectedValues = [];
+        let affirmationIndex = 0;
+        let breathingInterval = null;
+        let isBreathingActive = false;
+
+        // 5-4-3-2-1 Grounding Steps
+        const sensorySteps = [
+            { count: 5, label: "Things you can SEE", desc: "Look around and name 5 objects in your space." },
+            { count: 4, label: "Things you can TOUCH", desc: "Feel 4 textures (e.g., your clothes, table, blanket)." },
+            { count: 3, label: "Things you can HEAR", desc: "Listen closely for 3 distinct ambient sounds." },
+            { count: 2, label: "Things you can SMELL", desc: "Notice 2 scents or take two deep nasal breaths." },
+            { count: 1, label: "Thing you can TASTE", desc: "Notice a current taste or take a sip of water." }
+        ];
+        let currentSensoryStep = 0;
+
+        // --- INIT & TAB SWITCHING ---
+        window.onload = function() {
+            lucide.createIcons();
+            loadGlimmers();
+            loadTriggerEntries();
+            renderValuesGrid();
+            renderSensoryStepper();
+        };
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+                btn.classList.remove('text-sanctuary-sage');
+                btn.classList.add('text-gray-400');
+            });
+            const activeBtn = document.getElementById(`nav-btn-${tabId}`);
+            activeBtn.classList.remove('text-gray-400');
+            activeBtn.classList.add('text-sanctuary-sage');
+        }
+
+        // --- STATE SELECTION & SLIDERS ---
+        function selectState(stateKey) {
+            document.querySelectorAll('.state-btn').forEach(btn => btn.classList.remove('border-sanctuary-sage', 'border-sanctuary-terracotta', 'border-blue-300', 'bg-white'));
+            const textEl = document.getElementById('gentle-action-text');
+            textEl.textContent = stateRecommendations[stateKey];
+
+            const selectedBtn = document.getElementById(`state-btn-${stateKey}`);
+            selectedBtn.classList.add('bg-white');
+            if(stateKey === 'hyper') selectedBtn.classList.add('border-sanctuary-terracotta');
+            if(stateKey === 'window') selectedBtn.classList.add('border-sanctuary-sage');
+            if(stateKey === 'hypo') selectedBtn.classList.add('border-blue-300');
+        }
+
+        function updateSliderVal(type) {
+            const val = document.getElementById(`slider-${type}`).value;
+            document.getElementById(`val-${type}`).textContent = `${val}/10`;
+        }
+
+        function saveDailyKindness() {
+            const val = document.getElementById('daily-kindness-input').value.trim();
+            if(!val) return;
+            alert("Anchor saved for today! Remember to honor this small kindness.");
+            document.getElementById('daily-kindness-input').value = '';
+        }
+
+        // --- SOS MODAL & TOOLS ---
+        function openSOSModal() {
+            document.getElementById('sos-modal').classList.remove('hidden');
+        }
+
+        function closeSOSModal() {
+            document.getElementById('sos-modal').classList.add('hidden');
+            stopBreathing();
+        }
+
+        function switchSOSTab(subtab) {
+            document.querySelectorAll('.sos-subtab').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`sos-tab-${subtab}`).classList.remove('hidden');
+
+            const tabs = ['breathing', '54321', 'anchors'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`sos-tab-${t}-btn`);
+                if(t === subtab) {
+                    btn.className = "pb-3 border-b-2 border-sanctuary-sage text-sanctuary-sage font-medium";
+                } else {
+                    btn.className = "pb-3 border-b-2 border-transparent text-gray-400 hover:text-gray-600";
+                }
+            });
+            if(subtab !== 'breathing') stopBreathing();
+        }
+
+        // Box Breathing Logic
+        function toggleBreathing() {
+            if(isBreathingActive) {
+                stopBreathing();
+            } else {
+                startBreathing();
+            }
+        }
+
+        function startBreathing() {
+            isBreathingActive = true;
+            const ring = document.getElementById('breathing-ring');
+            const phase = document.getElementById('breathing-phase');
+            const btn = document.getElementById('breathing-toggle-btn');
+            
+            ring.classList.add('breathing-active');
+            btn.innerHTML = `<i data-lucide="pause" class="w-4 h-4"></i><span>Pause Breathing</span>`;
+            lucide.createIcons();
+
+            let step = 0;
+            const phases = ["Inhale (4s)", "Hold (4s)", "Exhale (4s)", "Hold (4s)"];
+            
+            phase.textContent = phases[0];
+            breathingInterval = setInterval(() => {
+                step = (step + 1) % 4;
+                phase.textContent = phases[step];
+            }, 4000);
+        }
+
+        function stopBreathing() {
+            isBreathingActive = false;
+            clearInterval(breathingInterval);
+            const ring = document.getElementById('breathing-ring');
+            const phase = document.getElementById('breathing-phase');
+            const btn = document.getElementById('breathing-toggle-btn');
+            
+            if(ring) ring.classList.remove('breathing-active');
+            if(phase) phase.textContent = "Inhale";
+            if(btn) {
+                btn.innerHTML = `<i data-lucide="play" class="w-4 h-4"></i><span>Start Breathing Guide</span>`;
+                lucide.createIcons();
+            }
+        }
+
+        // 5-4-3-2-1 Sensory Stepper
+        function renderSensoryStepper() {
+            const container = document.getElementById('sensory-stepper-container');
+            const item = sensorySteps[currentSensoryStep];
+            container.innerHTML = `
+                <div class="p-6 bg-sanctuary-bg rounded-2xl border border-gray-200/60 text-center space-y-3">
+                    <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-sanctuary-sage text-white text-xl font-bold">
+                        ${item.count}
+                    </span>
+                    <h3 class="text-lg font-semibold text-gray-800">${item.label}</h3>
+                    <p class="text-sm text-gray-600">${item.desc}</p>
+                </div>
+                <div class="flex justify-between items-center mt-4">
+                    <button onclick="prevSensoryStep()" ${currentSensoryStep === 0 ? 'disabled class="opacity-40 text-sm text-gray-400"' : 'class="text-sm text-sanctuary-sage font-medium"'}>Previous</button>
+                    <span class="text-xs text-gray-400">Step ${currentSensoryStep + 1} of 5</span>
+                    <button onclick="nextSensoryStep()" class="text-sm bg-sanctuary-sage text-white px-4 py-2 rounded-xl">
+                        ${currentSensoryStep === 4 ? 'Complete' : 'Next Step'}
+                    </button>
+                </div>
+            `;
+        }
+
+        function nextSensoryStep() {
+            if(currentSensoryStep < 4) {
+                currentSensoryStep++;
+            } else {
+                currentSensoryStep = 0;
+            }
+            renderSensoryStepper();
+        }
+
+        function prevSensoryStep() {
+            if(currentSensoryStep > 0) {
+                currentSensoryStep--;
+                renderSensoryStepper();
+            }
+        }
+
+        function nextAffirmation() {
+            affirmationIndex = (affirmationIndex + 1) % affirmations.length;
+            document.getElementById('affirmation-text').textContent = `"${affirmations[affirmationIndex]}"`;
+        }
+
+        // --- TRIGGER UNPACKER STORAGE ---
+        function saveTriggerEntry() {
+            const event = document.getElementById('trigger-event').value.trim();
+            const responseRadio = document.querySelector('input[name="response_type"]:checked');
+            const reality = document.getElementById('trigger-reality').value.trim();
+            const message = document.getElementById('trigger-part-message').value.trim();
+
+            if(!event || !responseRadio) {
+                alert("Please fill in at least Step 1 and select a survival response.");
+                return;
+            }
+
+            const newEntry = {
+                id: Date.now(),
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                event,
+                response: responseRadio.value,
+                reality,
+                message
+            };
+
+            const existing = JSON.parse(localStorage.getItem('sanctuary_triggers') || '[]');
+            existing.unshift(newEntry);
+            localStorage.setItem('sanctuary_triggers', JSON.stringify(existing));
+
+            // Reset Form
+            document.getElementById('trigger-event').value = '';
+            document.getElementById('trigger-reality').value = '';
+            document.getElementById('trigger-part-message').value = '';
+            if(responseRadio) responseRadio.checked = false;
+
+            loadTriggerEntries();
+        }
+
+        function loadTriggerEntries() {
+            const container = document.getElementById('trigger-list');
+            const entries = JSON.parse(localStorage.getItem('sanctuary_triggers') || '[]');
+
+            if(entries.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400 italic">No reflections saved yet. Use the form above when you are ready.</p>`;
+                return;
+            }
+
+            container.innerHTML = entries.map(entry => `
+                <div class="p-4 rounded-2xl bg-gray-50 border border-gray-100 space-y-2 text-sm">
+                    <div class="flex justify-between items-center text-xs text-gray-400">
+                        <span>${entry.date}</span>
+                        <span class="px-2 py-0.5 rounded-md bg-sanctuary-terracottaLight text-sanctuary-terracotta font-medium uppercase text-[10px]">${entry.response} Response</span>
+                    </div>
+                    <p class="text-gray-800 font-medium">Trigger: "${entry.event}"</p>
+                    ${entry.reality ? `<p class="text-xs text-gray-600"><strong>Present Reality:</strong> ${entry.reality}</p>` : ''}
+                    ${entry.message ? `<p class="text-xs text-gray-500 italic"><strong>To protector part:</strong> ${entry.message}</p>` : ''}
+                    <div class="text-right">
+                        <button onclick="deleteTriggerEntry(${entry.id})" class="text-[11px] text-red-400 hover:text-red-600">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteTriggerEntry(id) {
+            let entries = JSON.parse(localStorage.getItem('sanctuary_triggers') || '[]');
+            entries = entries.filter(e => e.id !== id);
+            localStorage.setItem('sanctuary_triggers', JSON.stringify(entries));
+            loadTriggerEntries();
+        }
+
+        // --- GLIMMER JAR STORAGE ---
+        function addGlimmer() {
+            const input = document.getElementById('glimmer-input');
+            const text = input.value.trim();
+            if(!text) return;
+
+            const glimmers = JSON.parse(localStorage.getItem('sanctuary_glimmers') || '[]');
+            glimmers.push({ id: Date.now(), text });
+            localStorage.setItem('sanctuary_glimmers', JSON.stringify(glimmers));
+
+            input.value = '';
+            loadGlimmers();
+        }
+
+        function loadGlimmers() {
+            const container = document.getElementById('glimmer-container');
+            const glimmers = JSON.parse(localStorage.getItem('sanctuary_glimmers') || '[]');
+
+            if(glimmers.length === 0) {
+                container.innerHTML = `<p class="text-xs text-amber-800/60 italic my-auto">Your glimmer jar is empty. Add a micro-moment of calm or beauty above.</p>`;
+                return;
+            }
+
+            container.innerHTML = glimmers.map(g => `
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-amber-200/80 text-xs font-medium text-amber-900 shadow-2xs">
+                    <span>✨ ${g.text}</span>
+                    <button onclick="deleteGlimmer(${g.id})" class="text-amber-400 hover:text-amber-700 ml-1">×</button>
+                </span>
+            `).join('');
+        }
+
+        function deleteGlimmer(id) {
+            let glimmers = JSON.parse(localStorage.getItem('sanctuary_glimmers') || '[]');
+            glimmers = glimmers.filter(g => g.id !== id);
+            localStorage.setItem('sanctuary_glimmers', JSON.stringify(glimmers));
+            loadGlimmers();
+        }
+
+        // --- VALUES DECK ---
+        function renderValuesGrid() {
+            const container = document.getElementById('values-grid');
+            container.innerHTML = valuesList.map(v => `
+                <div onclick="toggleValue('${v.name}', this)" class="p-3 rounded-2xl border border-gray-200 hover:border-sanctuary-sage bg-gray-50/50 cursor-pointer transition">
+                    <p class="text-sm font-semibold text-gray-800">${v.name}</p>
+                    <p class="text-[11px] text-gray-500 mt-0.5">${v.desc}</p>
+                </div>
+            `).join('');
+        }
+
+        function toggleValue(name, el) {
+            if(selectedValues.includes(name)) {
+                selectedValues = selectedValues.filter(v => v !== name);
+                el.classList.remove('bg-sanctuary-sageLight', 'border-sanctuary-sage');
+                el.classList.add('bg-gray-50/50');
+            } else {
+                selectedValues.push(name);
+                el.classList.add('bg-sanctuary-sageLight', 'border-sanctuary-sage');
+                el.classList.remove('bg-gray-50/50');
+            }
+        }
+    </script>
+</body>
+</html>
